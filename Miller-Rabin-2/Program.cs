@@ -80,24 +80,8 @@ namespace Miller_Rabin_2
             }
 
 
-        /*Строится число m= (где qi — различные случайные простые числа из таблицы,
-         * αi – случайные целые числа),
-         * размер которого на 1 бит меньше требуемого размера для простого числа;*/
-        static void Main()
+        public static BigInteger Create_m_Old(int numberLength)
         {
-            Console.WriteLine("Введите длину битовой последовательности простого числа: ");
-            int numberLength = Convert.ToInt32(Console.ReadLine());
-            //int targetLength = 
-
-            // 1)
-            SieveEratosthenes(_i);
-
-            //foreach(var z in _primeNumbers)
-            //{
-            //    Console.WriteLine(z);
-            //}
-            
-            // 2)
             BigInteger m = 1;
             var rnd = new Random();
             int maxLength = numberLength - 1;
@@ -146,15 +130,117 @@ namespace Miller_Rabin_2
                 }
 
             }
-            // ----------------------
             Console.WriteLine(m);
+            return m;
+            // ----------------------
+            
+        }
 
+        public static BigInteger Create_m_New(int numberLength)
+        {
+            //HashSet<int> takenQ = new HashSet<int>();
+
+
+            BigInteger m = 1;
+            var rnd = new Random();
+            int maxLength = numberLength - 1;
+
+            //while (m.GetBitLength() <= maxLength)
+            //{
+            //    //Console.WriteLine($"maxLength = {maxLength}");
+            //    // Берём простое число из таблицы под случайным индексом
+            //    int q = _primeNumbers[rnd.Next(0, _primeNumbers.Count - 1)];
+
+            //    m *= q;
+
+            //    // Если оставшаяся разрешенная длина <= битовой длины 
+            //    //if ((m * q).GetBitLength() <= maxLength)
+            //    //{
+            //    //    m *= q;
+            //    //}
+            //}
+            bool flag = false;
+            while (flag == false)
+            {
+                //Console.WriteLine($"maxLength = {maxLength}");
+                // Берём простое число из таблицы под случайным индексом
+                int q = _primeNumbers[rnd.Next(0, _primeNumbers.Count - 1)];
+
+                //m *= q;
+
+                var mBL = (m * q).GetBitLength();
+
+                // Если оставшаяся разрешенная длина <= битовой длины 
+                if (mBL <= maxLength)
+                {
+                    m *= q;
+
+                    if (m.GetBitLength() == maxLength)
+                    {
+                        flag = true;
+                    }
+                }
+            }
+
+
+
+            // extraLength не может быть отрицательной
+            // extraLength - лишняя длина (если вдруг длина m стала больше допустимой)
+            //var extraLength = m.GetBitLength() - maxLength;
+
+            //Console.WriteLine("Лишняя длина ");
+
+            //// Сокращаем лишнюю длину
+            //while (extraLength != 0)
+            //{
+            //    int extraQLength = new BitArray(_primeNumbers[rnd.Next(0, _primeNumbers.Count - 1)]).Length;
+            //        //((BigInteger)_primeNumbers[rnd.Next(0, _primeNumbers.Count - 1)]).GetBitLength()
+            //    if (extraLength == extraQLength)
+            //    {
+            //        extraLength -= extraLength;
+            //    }
+            //}
+
+
+            //if (m.GetBitLength() - maxLength > 0)
+            //{
+            //    while (m.GetBitLength() - maxLength != 0)
+            //    {
+
+            //    }
+            //}
+
+            Console.WriteLine(m.GetBitLength() - maxLength);
+
+            return m;
+        }
+
+        /*Строится число m= (где qi — различные случайные простые числа из таблицы,
+         * αi – случайные целые числа),
+         * размер которого на 1 бит меньше требуемого размера для простого числа;*/
+        static void Main()
+        {
+            Console.WriteLine("Введите длину битовой последовательности простого числа: ");
+            int numberLength = Convert.ToInt32(Console.ReadLine());
+            //int targetLength = 
+
+            // 1)
+            SieveEratosthenes(_i);
+
+            //foreach(var z in _primeNumbers)
+            //{
+            //    Console.WriteLine(z);
+            //}
+
+            // 2)
+            var m = Create_m_New(numberLength);
+            Console.WriteLine($"m = {m}");
             // 3)
             BigInteger n = 2 * m + 1;
 
             var ekz = new Miller(_primeNumbers);
             //ekz.MillerTest(4481, 3);
-            ekz.MillerTest(n, 3);
+            Console.WriteLine(ekz.MillerTest(n, 3));
         }
     }
 }
