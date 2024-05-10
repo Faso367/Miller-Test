@@ -10,6 +10,8 @@ namespace Miller_Rabin_2
         const int _i = 10000;
         // Таблица малых простых чисел
         public static List<int> _primeNumbers = new();
+        //public static List<int> _primeFactors = new();
+        public static Dictionary<int, int> q_a = new();
 
         /// <summary>
         /// Решето Эратосфена - заполняет таблицу простыми числами
@@ -55,6 +57,8 @@ namespace Miller_Rabin_2
         /// <returns>случайное большое число, состоит из разложения</returns>
         public static BigInteger Create_m_New(int numberLength)
         {
+            
+
             BigInteger m = 1;
             var rnd = new Random();
             int maxLength = numberLength - 1;
@@ -71,6 +75,14 @@ namespace Miller_Rabin_2
                 if (mBL <= maxLength)
                 {
                     m *= q;
+
+                    // Если такого простого числа еще нет,
+                    // то добавляем в словарь со степенью 1 
+                    if (!q_a.Keys.Contains(q))
+                        q_a.Add(q, 1);
+                    else
+                        // Если оно уже есть, то увеличиваем его степень
+                        q_a[q] += 1;
 
                     if (m.GetBitLength() == maxLength)
                     {
@@ -92,30 +104,22 @@ namespace Miller_Rabin_2
             // 1)
             SieveEratosthenes(_i);
 
-            // 2)
-            var m = Create_m_New(numberLength);
-
-            // 3)
-            BigInteger n = 2 * m + 1;
-            Console.WriteLine($"n = {n}");
-            var ekz = new Miller(_primeNumbers);
-            Console.WriteLine(ekz.MillerTest(n, 3));
-
-            /*
             while (true)
             {
+                // 2)
                 var m = Create_m_New(numberLength);
+                // 3)
                 BigInteger n = 2 * m + 1;
                 Console.WriteLine($"n = {n}");
-                var ekz = new Miller(_primeNumbers);
 
+                var ekz = new Miller(q_a);
                 string res = ekz.MillerTest(n, 3);
                 if (res == "n - простое число")
                 {
                     Console.WriteLine(res);
                     break;
                 }
-            }*/
+            }
         }
     }
 }

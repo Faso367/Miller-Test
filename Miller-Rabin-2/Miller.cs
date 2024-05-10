@@ -10,15 +10,15 @@ namespace Miller_Rabin_2
 {
     public class Miller
     {
-        // Таблица малых простых чисел
-        private static List<int> _primeNumbers;
+        // Содержит каноническое разложение, то есть пары  число : степень
+        private static Dictionary<int, int> q_a;
 
         /// <summary>
-        /// Принимает на вход заполненную таблицу малых простых чисел
+        /// Принимает на вход каноническое разложение числа m
         /// </summary>
-        public Miller(List<int> primeNumbers)
+        public Miller(Dictionary<int, int> canonicalDecompositionM)
         {
-            _primeNumbers = primeNumbers;
+            q_a = canonicalDecompositionM;
         }
 
         /// <summary>
@@ -64,25 +64,13 @@ namespace Miller_Rabin_2
         /// <returns></returns>
         public string MillerTest(BigInteger n, int t)
         {
-            // Содержит каноническое разложение, то есть пары  число : степень
-            Dictionary<BigInteger, int> q_a = new();
-            var nCopy = n - 1;
 
-            // Создаю каноническое разложение n - 1
-            for (int i = 0; i <= Math.Sqrt(_primeNumbers.Count); i++)
-            {
-                int a = 0;
-                var pn = _primeNumbers[i];
-                if (nCopy % pn == 0)
-                {
-                    while (nCopy % pn == 0)
-                    {
-                        a++;
-                        nCopy /= pn;
-                    }
-                    q_a.Add(pn, a);
-                }
-            }
+            // Добавляем 2, тк  n - 1 = 2 * m
+            if (!q_a.Keys.Contains(2))
+                q_a.Add(2, 1);
+            else
+                q_a[2] += 1;
+
 
             BigInteger[] ajArr = new BigInteger[t];
             
